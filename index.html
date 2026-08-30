@@ -33,6 +33,334 @@
   @keyframes drift { 0% { opacity:0; transform:translateY(0) scale(.7); } 18% { opacity:.85; } 70% { opacity:.5; } 100% { opacity:0; transform:translateY(-170px) scale(1.25); } }
   @keyframes shimmer { 0% { transform:translateX(-120%); } 60%,100% { transform:translateX(220%); } }
   @keyframes bar { from { width:12%; } to { width:64%; } }
+
+  /* ═══════════════════════════════════════════════════════════════
+     RESPONSIVE LAYER
+     The page is authored with inline style="" attributes, so every
+     override below needs !important to win against them. Rules are
+     matched on the inline declarations themselves via [style*=""].
+     Order matters: 3-value paddings come after 2-value ones because
+     "padding:110px 40px" is a substring of "padding:110px 40px 0".
+     ═══════════════════════════════════════════════════════════════ */
+
+  html { -webkit-text-size-adjust:100%; }
+  html, body { overflow-x:hidden; max-width:100%; }
+  /* overflow:clip contains the decorative overhangs without creating a
+     scroll container, which would silently kill position:sticky */
+  @supports (overflow:clip) { html, body { overflow-x:clip; } }
+  body { overflow-wrap:break-word; }
+  img, video, image-slot { max-width:100%; }
+
+  /* ───────────── ≤1080px — tablet / small laptop ───────────── */
+  @media (max-width:1080px){
+    /* the inline nav is overflow:hidden and silently clips links; the
+       hamburger + fullscreen menu already exist, so hand over to them */
+    header nav { display:none !important; }
+
+    /* 4-up and 3-up card grids become 2-up */
+    [style*="grid-template-columns:repeat(4,minmax(0,1fr))"],
+    [style*="grid-template-columns:repeat(3,1fr)"],
+    [style*="grid-template-columns:1.4fr 1fr 1fr 1.1fr"]{
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    }
+
+    /* outsized column gaps become vertical gaps once stacked */
+    [style*="gap:80px"],[style*="gap:76px"],[style*="gap:70px"],
+    [style*="gap:64px"],[style*="gap:60px 96px"],[style*="gap:58px"],
+    [style*="gap:56px"],[style*="gap:44px"]{ gap:40px !important; }
+
+    /* section rhythm: keep proportions, shrink the frame */
+    section[style], footer[style]{ padding-left:28px !important; padding-right:28px !important; }
+    [style*="padding:130px 40px"]{ padding-top:92px !important; padding-bottom:92px !important; }
+    [style*="padding:120px 40px"]{ padding-top:86px !important; padding-bottom:86px !important; }
+    [style*="padding:110px 40px"]{ padding-top:80px !important; padding-bottom:80px !important; }
+    [style*="padding:100px 40px"]{ padding-top:74px !important; padding-bottom:74px !important; }
+    [style*="padding:90px 40px"] { padding-top:66px !important; padding-bottom:66px !important; }
+    /* 3-value paddings — must follow the 2-value rules above */
+    [style*="padding:110px 40px 100px"]{ padding-top:80px !important; padding-bottom:74px !important; }
+    [style*="padding:110px 40px 80px"] { padding-top:80px !important; padding-bottom:60px !important; }
+    [style*="padding:110px 40px 0"]   { padding-top:80px !important; padding-bottom:0 !important; }
+    [style*="padding:120px 40px 90px"]{ padding-top:86px !important; padding-bottom:66px !important; }
+    [style*="padding:100px 40px 80px"]{ padding-top:74px !important; padding-bottom:60px !important; }
+    [style*="padding:80px 40px 36px"] { padding-top:60px !important; padding-bottom:32px !important; }
+    [style*="padding:60px 40px 110px"]{ padding-top:44px !important; padding-bottom:80px !important; }
+    [style*="padding:20px 40px 110px"]{ padding-top:16px !important; padding-bottom:80px !important; }
+    [style*="padding:20px 40px 100px"]{ padding-top:16px !important; padding-bottom:74px !important; }
+    [style*="padding:0 40px 100px"]   { padding-top:0 !important;    padding-bottom:74px !important; }
+    /* non-section 40px frames */
+    [style*="padding:0 40px"]  { padding-left:28px !important; padding-right:28px !important; }
+    [style*="padding:44px 40px"]{ padding:38px 30px !important; }
+
+    /* display type, step 1 */
+    [style*="font-size:92px"]{ font-size:68px !important; }
+    [style*="font-size:82px"]{ font-size:60px !important; }
+    [style*="font-size:80px"]{ font-size:58px !important; }
+    [style*="font-size:78px"]{ font-size:56px !important; }
+    [style*="font-size:76px"]{ font-size:54px !important; }
+    [style*="font-size:72px"]{ font-size:52px !important; }
+    [style*="font-size:60px"]{ font-size:46px !important; }
+    [style*="font-size:56px"]{ font-size:44px !important; }
+    [style*="font-size:54px"]{ font-size:42px !important; }
+    [style*="font-size:52px"]{ font-size:40px !important; }
+    [style*="font-size:50px"]{ font-size:40px !important; }
+    [style*="font-size:44px"]{ font-size:36px !important; }
+    [style*="font-size:40px"]{ font-size:33px !important; }
+    [style*="font-size:38px"]{ font-size:31px !important; }
+    [style*="font-size:36px"]{ font-size:30px !important; }
+    [style*="font-size:34px"]{ font-size:29px !important; }
+  }
+
+  /* ───────────── ≤820px — phones and small tablets ───────────── */
+  @media (max-width:820px){
+    /* every multi-column layout collapses to a single column.
+       Narrow-first-column grids (icon/number + text) are intentionally
+       NOT listed — they read fine at phone width and are restored below. */
+    [style*="grid-template-columns:1fr 1fr"],
+    [style*="grid-template-columns:repeat(2,1fr)"],
+    [style*="grid-template-columns:repeat(3,1fr)"],
+    [style*="grid-template-columns:repeat(4,minmax(0,1fr))"],
+    [style*="grid-template-columns:minmax(280px,.85fr)"],
+    [style*="grid-template-columns:minmax(300px,.82fr)"],
+    [style*="grid-template-columns:130px 1.3fr 1fr 150px"],
+    [style*="grid-template-columns:1.4fr 1fr 1fr 1.1fr"],
+    [style*="grid-template-columns:1.55fr 1fr"],
+    [style*="grid-template-columns:1.2fr .8fr"],
+    [style*="grid-template-columns:1.1fr 1fr"],
+    [style*="grid-template-columns:1fr .85fr"],
+    [style*="grid-template-columns:280px 1fr"],
+    [style*="grid-template-columns:180px 1fr"],
+    [style*="grid-template-columns:1fr auto"]{
+      grid-template-columns:minmax(0,1fr) !important;
+      align-items:start !important;
+    }
+    /* the 4-up photo mosaic sets explicit 250px rows — let them flow */
+    [style*="grid-template-rows:250px 250px"]{
+      grid-template-rows:none !important;
+      grid-auto-rows:230px !important;
+    }
+    /* restore icon/number + text pairs the blanket rule would have caught */
+    [style*="grid-template-columns:24px 1fr auto"]{ grid-template-columns:24px 1fr auto !important; }
+    [style*="grid-template-columns:56px 1fr"]     { grid-template-columns:56px 1fr !important; }
+    [style*="grid-template-columns:96px 1fr auto"]{ grid-template-columns:96px 1fr auto !important; }
+    [style*="grid-template-columns:130px 1fr"]    { grid-template-columns:110px 1fr !important; }
+
+    [style*="gap:80px"],[style*="gap:76px"],[style*="gap:70px"],
+    [style*="gap:64px"],[style*="gap:60px 96px"],[style*="gap:58px"],
+    [style*="gap:56px"],[style*="gap:44px"],[style*="gap:40px"],
+    [style*="gap:34px"],[style*="gap:32px"],[style*="gap:30px"]{ gap:28px !important; }
+
+    /* let button/pill rows wrap instead of overflowing.
+       Scoped to main and excludes columns, where wrap would create
+       unwanted extra columns on height-constrained containers. */
+    main [style*="display:flex"]:not([style*="flex-direction:column"]){ flex-wrap:wrap !important; }
+    /* CTA pairs sit under centred hero/section copy — keep them centred once stacked */
+    [style*="gap:16px;margin-top:44px"]{ justify-content:center !important; }
+
+    /* a sticky sidebar is meaningless once its grid is one column */
+    [style*="position:sticky"]{ position:static !important; }
+
+    /* compact header, and keep main/hero offsets in step with it */
+    header [style*="height:82px"]{ height:68px !important; }
+    header [style*="padding:0 28px"]{ padding-left:16px !important; padding-right:16px !important; }
+    main[style*="padding-top:82px"]{ padding-top:68px !important; }
+
+    /* hero: drop 100vh (unstable with mobile URL bars) and let content size it */
+    [style*="height:calc(100vh - 82px)"]{
+      height:auto !important;
+      min-height:0 !important;
+      padding-top:64px !important;
+      padding-bottom:76px !important;
+    }
+    [style*="height:112px"]{ height:auto !important; min-height:104px !important; }
+
+    /* decorative Om watermark is sized for a 1440px canvas */
+    [style*="font-size:400px"]{
+      width:340px !important; height:340px !important;
+      margin:-170px 0 0 -170px !important;
+      font-size:250px !important; line-height:340px !important;
+    }
+    /* the rotating mantra lines are absolutely stacked — keep them in flow-height */
+    [style*="animation:mline"]{ position:relative !important; }
+    [style*="animation:mline"]:not(:first-child){ position:absolute !important; }
+
+    section[style], footer[style]{ padding-left:20px !important; padding-right:20px !important; }
+    [style*="padding:130px 40px"]{ padding-top:64px !important; padding-bottom:64px !important; }
+    [style*="padding:120px 40px"]{ padding-top:60px !important; padding-bottom:60px !important; }
+    [style*="padding:110px 40px"]{ padding-top:58px !important; padding-bottom:58px !important; }
+    [style*="padding:100px 40px"]{ padding-top:54px !important; padding-bottom:54px !important; }
+    [style*="padding:90px 40px"] { padding-top:48px !important; padding-bottom:48px !important; }
+    [style*="padding:110px 40px 100px"]{ padding-top:58px !important; padding-bottom:54px !important; }
+    [style*="padding:110px 40px 80px"] { padding-top:58px !important; padding-bottom:44px !important; }
+    [style*="padding:110px 40px 0"]   { padding-top:58px !important; padding-bottom:0 !important; }
+    [style*="padding:120px 40px 90px"]{ padding-top:60px !important; padding-bottom:48px !important; }
+    [style*="padding:100px 40px 80px"]{ padding-top:54px !important; padding-bottom:44px !important; }
+    [style*="padding:80px 40px 36px"] { padding-top:48px !important; padding-bottom:28px !important; }
+    [style*="padding:60px 40px 110px"]{ padding-top:32px !important; padding-bottom:58px !important; }
+    [style*="padding:20px 40px 110px"]{ padding-top:12px !important; padding-bottom:58px !important; }
+    [style*="padding:20px 40px 100px"]{ padding-top:12px !important; padding-bottom:54px !important; }
+    [style*="padding:0 40px 100px"]   { padding-top:0 !important;    padding-bottom:54px !important; }
+    [style*="padding:0 40px"]  { padding-left:20px !important; padding-right:20px !important; }
+    [style*="padding:44px 40px"]{ padding:30px 22px !important; }
+    [style*="padding:32px 26px 28px"]{ padding:26px 22px 24px !important; }
+
+    /* card interiors — only the horizontal frame is trimmed so the
+       vertical rhythm each card was designed with survives */
+    [style*="padding:48px 52px"],[style*="padding:46px 48px"],
+    [style*="padding:48px 44px"],[style*="padding:44px 46px"],
+    [style*="padding:44px 36px 38px"],[style*="padding:40px 34px 34px"],
+    [style*="padding:38px 34px"],[style*="padding:38px 32px"],
+    [style*="padding:34px 30px"],[style*="padding:32px 30px"],
+    [style*="padding:30px 32px 32px"],[style*="padding:26px 30px"],
+    [style*="padding:30px 20px"],[style*="padding:40px"]{
+      padding-left:22px !important; padding-right:22px !important;
+    }
+    /* the tallest cards also lose some vertical bulk */
+    [style*="padding:48px 52px"],[style*="padding:46px 48px"],
+    [style*="padding:48px 44px"],[style*="padding:44px 46px"]{
+      padding-top:32px !important; padding-bottom:32px !important;
+    }
+    [style*="padding:0 60px 28px 6px"]{ padding-right:20px !important; }
+
+    /* CTA pills — keep the height, tighten the sides */
+    [style*="padding:18px 38px"],[style*="padding:16px 36px"],
+    [style*="padding:16px 34px"],[style*="padding:17px 34px"],
+    [style*="padding:16px 32px"],[style*="padding:18px 30px"],
+    [style*="padding:16px 30px"],[style*="padding:15px 30px"],
+    [style*="padding:16px 34px"]{
+      padding-left:24px !important; padding-right:24px !important;
+    }
+
+    /* fullscreen menu: single column, and scrollable if it outgrows the screen */
+    [style*="z-index:80"]{
+      overflow-y:auto !important;
+      overflow-x:hidden !important;
+      align-items:flex-start !important;
+      justify-content:center !important;
+      -webkit-overflow-scrolling:touch;
+    }
+    [style*="margin:auto;display:grid"]{
+      margin:0 !important;
+      width:100% !important;
+      padding:92px 20px 48px !important;
+    }
+    [style*="z-index:80"] [style*="max-width:340px"]{ max-width:none !important; }
+
+    /* display type, step 2 */
+    [style*="font-size:92px"]{ font-size:46px !important; }
+    [style*="font-size:82px"]{ font-size:41px !important; }
+    [style*="font-size:80px"]{ font-size:40px !important; }
+    [style*="font-size:78px"]{ font-size:39px !important; }
+    [style*="font-size:76px"]{ font-size:38px !important; }
+    [style*="font-size:72px"]{ font-size:37px !important; }
+    [style*="font-size:60px"]{ font-size:33px !important; }
+    [style*="font-size:56px"]{ font-size:31px !important; }
+    [style*="font-size:54px"]{ font-size:30px !important; }
+    [style*="font-size:52px"]{ font-size:30px !important; }
+    [style*="font-size:50px"]{ font-size:29px !important; }
+    [style*="font-size:44px"]{ font-size:27px !important; }
+    [style*="font-size:40px"]{ font-size:25px !important; }
+    [style*="font-size:38px"]{ font-size:24px !important; }
+    [style*="font-size:36px"]{ font-size:23px !important; }
+    [style*="font-size:34px"]{ font-size:23px !important; }
+    [style*="font-size:32px"]{ font-size:22px !important; }
+    [style*="font-size:30px"]{ font-size:21px !important; }
+    [style*="font-size:29px"]{ font-size:22px !important; }
+    [style*="font-size:25px"]{ font-size:21px !important; }
+
+    /* 16px minimum stops iOS Safari zooming the page on focus */
+    input, textarea, select{ font-size:16px !important; width:100% !important; }
+    button[style*="padding:19px 40px"]{ width:100% !important; padding:17px 24px !important; }
+
+    /* comfortable tap targets */
+    nav a, footer a, [onClick]{ -webkit-tap-highlight-color:rgba(224,138,60,.18); }
+  }
+
+  /* ───────────── ≤480px — narrow phones ───────────── */
+  @media (max-width:480px){
+    /* header has to fit logo + donate + hamburger inside ~360px */
+    header [style*="width:48px;height:48px"]{ width:38px !important; height:38px !important; }
+    header [style*="font-size:23px"]{ font-size:17px !important; letter-spacing:.03em !important; }
+    header [style*="'Noto Serif Kannada'"]{ display:none !important; }
+    header a[style*="padding:12px 22px"]{
+      padding:10px 14px !important;
+      font-size:10px !important;
+      letter-spacing:.1em !important;
+      gap:6px !important;
+    }
+    header button[style*="width:44px"]{ width:40px !important; height:40px !important; }
+    header [style*="height:82px"]{ height:62px !important; }
+    header [style*="gap:20px"]{ gap:10px !important; }
+    header a[style*="gap:14px"]{ gap:9px !important; }
+    main[style*="padding-top:82px"]{ padding-top:62px !important; }
+
+    /* term/definition pairs finally stack */
+    [style*="grid-template-columns:130px 1fr"]{ grid-template-columns:minmax(0,1fr) !important; }
+    [style*="grid-template-columns:96px 1fr auto"]{ grid-template-columns:72px 1fr !important; }
+
+    section[style], footer[style]{ padding-left:16px !important; padding-right:16px !important; }
+    [style*="padding:0 40px"]{ padding-left:16px !important; padding-right:16px !important; }
+    [style*="padding:130px 40px"],[style*="padding:120px 40px"],
+    [style*="padding:110px 40px"],[style*="padding:100px 40px"]{
+      padding-top:48px !important; padding-bottom:48px !important;
+    }
+    [style*="padding:110px 40px 0"]{ padding-top:48px !important; padding-bottom:0 !important; }
+    [style*="padding:0 40px 100px"]{ padding-top:0 !important; padding-bottom:44px !important; }
+
+    [style*="gap:26px"],[style*="gap:24px"]{ gap:20px !important; }
+    [style*="grid-template-rows:250px 250px"]{ grid-auto-rows:190px !important; }
+
+    [style*="padding:48px 52px"],[style*="padding:46px 48px"],
+    [style*="padding:48px 44px"],[style*="padding:44px 46px"],
+    [style*="padding:44px 36px 38px"],[style*="padding:40px 34px 34px"],
+    [style*="padding:38px 34px"],[style*="padding:38px 32px"],
+    [style*="padding:34px 30px"],[style*="padding:32px 30px"],
+    [style*="padding:30px 32px 32px"],[style*="padding:26px 30px"],
+    [style*="padding:30px 20px"],[style*="padding:40px"],
+    [style*="padding:44px 40px"],[style*="padding:32px 26px 28px"]{
+      padding-left:17px !important; padding-right:17px !important;
+    }
+    [style*="padding:18px 38px"],[style*="padding:16px 36px"],
+    [style*="padding:16px 34px"],[style*="padding:17px 34px"],
+    [style*="padding:16px 32px"],[style*="padding:18px 30px"],
+    [style*="padding:16px 30px"],[style*="padding:15px 30px"]{
+      padding-left:20px !important; padding-right:20px !important;
+    }
+
+    /* display type, step 3 */
+    [style*="font-size:92px"]{ font-size:37px !important; }
+    [style*="font-size:82px"]{ font-size:33px !important; }
+    [style*="font-size:80px"]{ font-size:32px !important; }
+    [style*="font-size:78px"]{ font-size:31px !important; }
+    [style*="font-size:76px"]{ font-size:31px !important; }
+    [style*="font-size:72px"]{ font-size:30px !important; }
+    [style*="font-size:60px"]{ font-size:27px !important; }
+    [style*="font-size:56px"]{ font-size:26px !important; }
+    [style*="font-size:54px"]{ font-size:25px !important; }
+    [style*="font-size:52px"]{ font-size:25px !important; }
+    [style*="font-size:50px"]{ font-size:24px !important; }
+    [style*="font-size:44px"]{ font-size:22px !important; }
+    [style*="font-size:40px"]{ font-size:22px !important; }
+    [style*="font-size:38px"]{ font-size:21px !important; }
+    [style*="font-size:36px"]{ font-size:20px !important; }
+    [style*="font-size:34px"]{ font-size:20px !important; }
+    [style*="font-size:32px"]{ font-size:19px !important; }
+    [style*="font-size:30px"]{ font-size:19px !important; }
+    [style*="font-size:29px"]{ font-size:20px !important; }
+
+    /* wide letter-spacing on small caps eats the line at this width */
+    [style*="letter-spacing:.34em"]{ letter-spacing:.2em !important; }
+    [style*="letter-spacing:.3em"] { letter-spacing:.2em !important; }
+    [style*="letter-spacing:.24em"]{ letter-spacing:.16em !important; }
+  }
+
+  /* respect users who ask for less motion */
+  @media (prefers-reduced-motion:reduce){
+    *, *::before, *::after{
+      animation-duration:.01ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:.01ms !important;
+    }
+  }
 </style>
 </helmet>
 
