@@ -1,7 +1,7 @@
 // Design tokens from the Stitch "Sacred Modernity" design.
 // Rebuild assets/site.css after changing this or any page: ./build-css.ps1
 module.exports = {
-  content: ['./*.html', './assets/site.js'],
+  content: ['./*.html', './assets/site.js', './assets/motion.js'],
   theme: {
     extend: {
       colors: {
