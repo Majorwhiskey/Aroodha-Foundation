@@ -8,7 +8,7 @@ html, body {
   background-color: #f8fafc;
   color: #191c21;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip; /* not hidden: hidden makes body a scroll container and breaks the sticky header */
 }
 .sacred-quote {
   font-family: 'EB Garamond', serif;
@@ -174,3 +174,8 @@ html, body {
 
 /* FAQ accordion: hide the native disclosure triangle */
 summary::-webkit-details-marker { display: none; }
+
+/* Lenis smooth scroll (from lenis.css, minus its iframe rule, which would block the contact map) */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }

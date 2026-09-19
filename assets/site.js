@@ -52,8 +52,6 @@ const scrollProgress = document.getElementById('scroll-progress');
 const heroBg = document.getElementById('hero-parallax-bg');
 const orb1 = document.getElementById('hero-orb-1');
 const orb2 = document.getElementById('hero-orb-2');
-const portraitCard = document.getElementById('portrait-card');
-const wisdomGlow = document.getElementById('wisdom-glow');
 const mainNav = document.getElementById('main-nav');
 
 window.addEventListener('scroll', () => {
@@ -78,25 +76,6 @@ window.addEventListener('scroll', () => {
     }
     if (orb2 && scrollTop < 900) {
       orb2.style.transform = `translateY(${scrollTop * -0.15}px)`;
-    }
-
-    // Parallax float on Uttam Jnan's portrait
-    if (portraitCard) {
-      const rect = portraitCard.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom > 0) {
-        const offset = (window.innerHeight / 2 - (rect.top + rect.height / 2)) * 0.05;
-        portraitCard.style.transform = `translateY(${offset}px)`;
-      }
-    }
-
-    // Ambient wisdom expansion
-    const wisdomSec = document.getElementById('wisdom');
-    if (wisdomGlow && wisdomSec) {
-      const wRect = wisdomSec.getBoundingClientRect();
-      if (wRect.top < window.innerHeight && wRect.bottom > 0) {
-        const ratio = 1 - (wRect.top / window.innerHeight);
-        wisdomGlow.style.transform = `scale(${1 + Math.min(Math.max(ratio * 0.15, 0), 0.2)})`;
-      }
     }
   }
 }, { passive: true });
