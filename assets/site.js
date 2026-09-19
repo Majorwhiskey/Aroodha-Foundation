@@ -192,3 +192,178 @@ if (contactForm) {
     openWhatsApp('Namaskara, I am writing about: ' + field(f, 'topic') + '\nName: ' + field(f, 'name') + (field(f, 'phone') ? '\nPhone: ' + field(f, 'phone') : '') + '\n\n' + field(f, 'message'));
   });
 }
+
+// Morning / evening theme. The <head> script picks one from the visitor's clock
+// (evening from 6:30 PM to 5 AM, around the 7 PM and 5:30 AM sadhana); the
+// toggle overrides it and remembers the choice.
+const themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) {
+  const root = document.documentElement;
+  const sync = () => {
+    const evening = root.classList.contains('evening');
+    themeBtn.querySelector('span').textContent = evening ? 'light_mode' : 'dark_mode';
+    themeBtn.title = evening ? 'Morning mode' : 'Evening mode';
+    themeBtn.setAttribute('aria-label', 'Switch to ' + (evening ? 'morning' : 'evening') + ' mode');
+  };
+  themeBtn.addEventListener('click', () => {
+    const evening = root.classList.toggle('evening');
+    try { localStorage.setItem('aroodha-theme', evening ? 'evening' : 'morning'); } catch (e) { /* not remembered */ }
+    sync();
+  });
+  sync();
+}
+
+// Countdown to the weekly satsang (Sunday 10:00–11:30 AM IST), shown in the top banner.
+const bannerCountdown = document.getElementById('banner-countdown');
+if (bannerCountdown) {
+  const IST = 5.5 * 3600e3;
+  const plural = (n, word) => n + ' ' + word + (n === 1 ? '' : 's');
+  const update = () => {
+    const now = Date.now();
+    const ist = new Date(now + IST); // read with UTC getters = wall-clock time in India
+    const day = ist.getUTCDay();
+    const mins = ist.getUTCHours() * 60 + ist.getUTCMinutes();
+    const short = window.innerWidth < 640;
+    const tail = short ? ' · Sadhana 5:30 AM & 7 PM' : ' · Daily sadhana 5:30 AM & 7:00 PM IST';
+    if (day === 0 && mins >= 600 && mins < 690) {
+      bannerCountdown.textContent = 'Weekly Satsang is on now' + (short ? '' : ' · Foundation hall, Hubballi');
+      return;
+    }
+    let ahead = (7 - day) % 7;
+    if (day === 0 && mins >= 690) ahead = 7;
+    const target = Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth(), ist.getUTCDate() + ahead, 10, 0) - IST;
+    const left = Math.max(0, target - now);
+    const d = Math.floor(left / 864e5), h = Math.floor(left / 36e5) % 24, m = Math.floor(left / 6e4) % 60;
+    let when;
+    if (short) when = d ? `${d}d ${h}h` : (h ? `${h}h ${m}m` : `${m} min`);
+    else when = d ? `${plural(d, 'day')}, ${plural(h, 'hour')}` : (h ? `${plural(h, 'hour')}, ${m} min` : `${m} min`);
+    bannerCountdown.textContent = (short ? 'Satsang in ' : 'Weekly Satsang in ') + when + tail;
+  };
+  update();
+  setInterval(update, 30000);
+  window.addEventListener('resize', update);
+}
+
+// Donate form (donate.html)
+const donateForm = document.getElementById('donate-form');
+if (donateForm) {
+  donateForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = donateForm;
+    const chosen = f.querySelector('.dana-btn.active');
+    const other = field(f, 'other');
+    const amount = other ? '₹' + Number(other).toLocaleString('en-IN') : (chosen ? chosen.dataset.amount : '');
+    openWhatsApp('Namaskara, I would like to offer dana of ' + amount + ' towards: ' + field(f, 'purpose') +
+      '.\nName: ' + field(f, 'name') + (field(f, 'pan') ? '\nPAN (for 80G receipt): ' + field(f, 'pan') : ''));
+  });
+}
+
+// Gallery lightbox: opens photos that have loaded (placeholders stay put).
+const gallery = document.querySelector('[data-gallery]');
+if (gallery) {
+  const box = document.createElement('div');
+  box.id = 'lightbox';
+  box.setAttribute('role', 'dialog');
+  box.setAttribute('aria-modal', 'true');
+  box.innerHTML = '<button aria-label="Close" class="absolute top-5 right-5 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition" type="button"><span class="material-symbols-outlined">close</span></button><img alt=""/><p class="text-gold-soft text-xs font-semibold uppercase tracking-widest"></p>';
+  document.body.appendChild(box);
+  const img = box.querySelector('img'), cap = box.querySelector('p'), closeBtn = box.querySelector('button');
+  const close = () => { box.classList.remove('is-open'); if (window.__lenis) window.__lenis.start(); };
+  gallery.addEventListener('click', (e) => {
+    const fig = e.target.closest('figure');
+    const photo = fig && fig.querySelector('img');
+    if (!photo) return;
+    img.src = photo.currentSrc || photo.src;
+    img.alt = photo.alt;
+    cap.textContent = fig.querySelector('figcaption') ? fig.querySelector('figcaption').textContent.trim() : '';
+    box.classList.add('is-open');
+    if (window.__lenis) window.__lenis.stop();
+    if (window.gsap) gsap.fromTo(img, { scale: 0.92, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'expo.out' });
+    closeBtn.focus();
+  });
+  box.addEventListener('click', (e) => { if (e.target === box || e.target.closest('button')) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && box.classList.contains('is-open')) close(); });
+}
+
+// Breathing guide: a floating 4–7–8 breath, four rounds.
+(() => {
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.id = 'breath-toggle';
+  toggle.setAttribute('aria-label', 'Open the breathing guide');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.title = 'Breathe · 4–7–8';
+  toggle.className = 'fixed bottom-4 left-4 sm:bottom-5 sm:left-5 z-[60] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border border-gold/40 shadow-lg hover:shadow-xl flex items-center justify-center transition';
+  toggle.innerHTML = '<span class="w-5 h-5 rounded-full bg-gradient-to-br from-gold-light to-gold animate-pulse"></span>';
+
+  const panel = document.createElement('div');
+  panel.id = 'breath-panel';
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-label', 'Breathing guide');
+  panel.className = 'hidden fixed bottom-24 left-5 z-[60] w-[19rem] max-w-[calc(100vw-2.5rem)] rounded-3xl bg-white border border-border-subtle shadow-2xl p-6 text-center';
+  panel.innerHTML = `
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] font-bold uppercase tracking-widest text-gold">Breathe • 4–7–8</span>
+      <button aria-label="Close the breathing guide" class="w-8 h-8 rounded-full hover:bg-surface-muted text-on-surface-variant flex items-center justify-center" data-breath-close type="button"><span class="material-symbols-outlined text-lg">close</span></button>
+    </div>
+    <div class="relative h-44 flex items-center justify-center my-3">
+      <div class="absolute w-40 h-40 rounded-full border border-gold/30"></div>
+      <div class="absolute w-40 h-40 rounded-full border border-dashed border-gold/20"></div>
+      <div class="breath-orb w-16 h-16 rounded-full bg-gradient-to-br from-gold-light to-gold shadow-[0_0_40px_rgba(201,154,62,0.45)]"></div>
+    </div>
+    <div class="font-serif text-2xl text-primary" data-breath-phase>Ready when you are</div>
+    <div class="text-xs text-on-surface-variant mt-1 h-4" data-breath-count></div>
+    <button class="mt-5 px-6 py-2.5 rounded-full bg-primary hover:bg-royal-blue text-white text-xs font-semibold tracking-wider uppercase transition" data-breath-start type="button">Begin</button>
+    <p class="text-[11px] text-on-surface-variant leading-relaxed mt-4">Inhale through the nose for 4, hold for 7, exhale slowly through the mouth for 8. Four rounds.</p>`;
+  document.body.append(toggle, panel);
+
+  const orb = panel.querySelector('.breath-orb');
+  const phaseEl = panel.querySelector('[data-breath-phase]');
+  const countEl = panel.querySelector('[data-breath-count]');
+  const startBtn = panel.querySelector('[data-breath-start]');
+  const PHASES = [['Breathe in', 4, 2.5], ['Hold', 7, 2.5], ['Breathe out', 8, 1]];
+  const ROUNDS = 4;
+  let timer = null;
+
+  const stop = (message) => {
+    clearInterval(timer); timer = null;
+    orb.style.transitionDuration = '1.2s';
+    orb.style.transform = 'scale(1)';
+    phaseEl.textContent = message || 'Ready when you are';
+    countEl.textContent = '';
+    startBtn.textContent = 'Begin';
+  };
+  const start = () => {
+    let round = 1, phase = 0, left = PHASES[0][1];
+    const show = () => {
+      const [name, secs, scale] = PHASES[phase];
+      phaseEl.textContent = name;
+      orb.style.transitionDuration = secs + 's';
+      orb.style.transform = `scale(${scale})`;
+      countEl.textContent = `${left} · round ${round} of ${ROUNDS}`;
+    };
+    show();
+    startBtn.textContent = 'Stop';
+    timer = setInterval(() => {
+      left -= 1;
+      if (left > 0) { countEl.textContent = `${left} · round ${round} of ${ROUNDS}`; return; }
+      phase = (phase + 1) % PHASES.length;
+      if (phase === 0) round += 1;
+      if (round > ROUNDS) { stop('Rest in the stillness'); return; }
+      left = PHASES[phase][1];
+      show();
+    }, 1000);
+  };
+
+  toggle.addEventListener('click', () => {
+    const open = !panel.classList.toggle('hidden');
+    toggle.setAttribute('aria-expanded', String(open));
+    if (!open) stop();
+  });
+  panel.querySelector('[data-breath-close]').addEventListener('click', () => {
+    panel.classList.add('hidden');
+    toggle.setAttribute('aria-expanded', 'false');
+    stop();
+  });
+  startBtn.addEventListener('click', () => (timer ? stop() : start()));
+})();

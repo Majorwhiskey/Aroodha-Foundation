@@ -10,7 +10,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;family=EB+Garamond:ital,wght@0,400..700;1,400..700&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');window.__veilTimer=setTimeout(function(){document.documentElement.classList.remove('is-loading')},3000)}</script>
+<script>(function(){var d=document.documentElement,t;try{t=localStorage.getItem('aroodha-theme')}catch(e){}if(!t){var n=new Date(),h=n.getHours()+n.getMinutes()/60;t=(h>=18.5||h<5)?'evening':'morning'}if(t==='evening')d.classList.add('evening');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-loading');window.__veilTimer=setTimeout(function(){d.classList.remove('is-loading')},3000)}})()</script>
 <link href="assets/site.css" rel="stylesheet"/>
 </head>
 <body class="antialiased selection:bg-gold-pale selection:text-primary-dark">
@@ -20,42 +20,45 @@
 <!-- TOP SACRED BANNER -->
 <aside aria-label="Announcement" class="bg-midnight-blue text-gold-soft py-2 px-4 text-center text-xs tracking-wider border-b border-gold/20 flex items-center justify-center gap-2 relative z-50">
 <span class="w-1.5 h-1.5 rounded-full bg-gold inline-block animate-pulse"></span>
-<span class="font-medium">Daily Sadhana Broadcast: 5:30 AM &amp; 7:00 PM IST</span>
+<span class="font-medium" id="banner-countdown">Daily Sadhana Broadcast: 5:30 AM &amp; 7:00 PM IST</span>
 <span class="text-gold/40">|</span>
-<a class="underline underline-offset-2 hover:text-white transition" href="online.html">Join the Morning Sanctuary →</a>
+<a class="underline underline-offset-2 hover:text-white transition whitespace-nowrap" href="online.html">Join the Morning Sanctuary →</a>
 </aside>
 <!-- NAVIGATION BAR -->
 <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-border-subtle transition-all duration-300" id="main-nav">
-<div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between gap-6">
+<div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 h-20 flex items-center justify-between gap-3 sm:gap-6">
 <!-- Brand Identity -->
-<a class="flex items-center gap-3.5 group" href="index.html">
+<a class="flex items-center gap-2.5 sm:gap-3.5 group min-w-0" href="index.html">
 <div class="w-11 h-11 rounded-full bg-primary flex items-center justify-center shadow-md border border-gold/30 group-hover:scale-105 group-hover:bg-royal-blue transition duration-300">
 <span class="material-symbols-outlined text-gold-light text-2xl group-hover:rotate-12 transition-transform duration-500">spa</span>
 </div>
 <div class="flex flex-col">
 <div class="flex items-baseline gap-2">
-<span class="font-serif text-2xl font-bold tracking-tight text-primary">AROODHA</span>
-<span class="font-serif text-gold font-semibold text-lg">ಆರೂಢ</span>
+<span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-primary">AROODHA</span>
+<span class="font-serif text-gold font-semibold text-base sm:text-lg">ಆರೂಢ</span>
 </div>
 <span class="hidden sm:block whitespace-nowrap text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-semibold">Hubballi • Foundation of Inner Truth</span>
 </div>
 </a>
 <!-- Desktop Navigation Links -->
 <nav class="hidden xl:flex items-center gap-7 text-sm font-medium text-on-surface-variant whitespace-nowrap">
-<a class="hover:text-primary transition-colors" href="index.html#about">About</a>
-<a class="hover:text-primary transition-colors" href="index.html#founder">Uttam Jnan</a>
+<a class="hover:text-primary transition-colors" href="about.html">About</a>
+<a class="hover:text-primary transition-colors" href="uttam-jnan.html">Uttam Jnan</a>
 <a class="hover:text-primary transition-colors" href="programs.html">Programmes</a>
 <a class="hover:text-primary transition-colors" href="online.html">Online</a>
 <a class="hover:text-primary transition-colors" href="events.html">Events</a>
 <a class="hover:text-primary transition-colors" href="contact.html">Contact</a>
 </nav>
-<!-- Support CTA -->
-<div class="flex items-center gap-3">
-<a class="hidden sm:inline-flex items-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-full bg-primary hover:bg-royal-blue text-white text-xs font-semibold tracking-wider uppercase transition shadow-md hover:shadow-lg hover:-translate-y-0.5 border border-primary/20" href="index.html#dana">
+<!-- Theme + Support CTA -->
+<div class="flex items-center gap-2 sm:gap-3 shrink-0">
+<button aria-label="Switch to evening mode" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-border-subtle bg-white text-primary flex items-center justify-center hover:border-gold/60 transition" id="theme-toggle" title="Evening mode" type="button">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<a class="hidden sm:inline-flex items-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-full bg-primary hover:bg-royal-blue text-white text-xs font-semibold tracking-wider uppercase transition shadow-md hover:shadow-lg hover:-translate-y-0.5 border border-primary/20" href="donate.html">
 <span>Support the Seva / ದಾನ</span>
 <span class="material-symbols-outlined text-sm text-gold-soft">volunteer_activism</span>
 </a>
-<button aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="xl:hidden w-11 h-11 rounded-full border border-border-subtle bg-white text-primary flex items-center justify-center" id="menu-toggle" type="button">
+<button aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="xl:hidden w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-border-subtle bg-white text-primary flex items-center justify-center" id="menu-toggle" type="button">
 <span class="material-symbols-outlined">menu</span>
 </button>
 </div>
@@ -63,13 +66,13 @@
 <!-- Mobile Navigation -->
 <nav class="hidden xl:hidden border-t border-border-subtle bg-white" id="mobile-menu">
 <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col text-sm font-medium text-on-surface-variant">
-<a class="py-3 border-b border-border-subtle hover:text-primary" href="index.html#about">About</a>
-<a class="py-3 border-b border-border-subtle hover:text-primary" href="index.html#founder">Uttam Jnan</a>
+<a class="py-3 border-b border-border-subtle hover:text-primary" href="about.html">About</a>
+<a class="py-3 border-b border-border-subtle hover:text-primary" href="uttam-jnan.html">Uttam Jnan</a>
 <a class="py-3 border-b border-border-subtle hover:text-primary" href="programs.html">Programmes</a>
 <a class="py-3 border-b border-border-subtle hover:text-primary" href="online.html">Online</a>
 <a class="py-3 border-b border-border-subtle hover:text-primary" href="events.html">Events</a>
 <a class="py-3 border-b border-border-subtle hover:text-primary" href="contact.html">Contact</a>
-<a class="mt-4 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-primary text-white text-xs font-semibold tracking-wider uppercase" href="index.html#dana">Support the Seva / ದಾನ</a>
+<a class="mt-4 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-primary text-white text-xs font-semibold tracking-wider uppercase" href="donate.html">Support the Seva / ದಾನ</a>
 </div>
 </nav>
 </header>
@@ -105,6 +108,11 @@
 <a class="px-8 py-3.5 rounded-full bg-white hover:bg-surface-muted text-primary border border-border-subtle text-sm font-semibold tracking-wide transition hover:-translate-y-0.5 shadow-sm" href="#founder">
           Meet Uttam Jnan
         </a>
+</div>
+<!-- HERO PHOTO BAND -->
+<div class="w-full mb-16 relative rounded-3xl overflow-hidden shadow-2xl" data-hero-photo="">
+<figure class="photo-slot aspect-[16/9] sm:aspect-[16/7] rounded-3xl"><img alt="Satsang at dawn, Hubballi" loading="lazy" onerror="this.remove()" src="assets/photos/hero.jpg"/><figcaption class="photo-slot-label"><span class="material-symbols-outlined">photo_camera</span><span>Satsang at dawn, Hubballi</span></figcaption></figure>
+<div class="hero-photo-shade absolute inset-0 pointer-events-none"></div>
 </div>
 <!-- UPANISHADIC PEACE MANTRAS (Three Cards) -->
 <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
@@ -276,9 +284,9 @@
 <span class="material-symbols-outlined text-lg text-gold-light">play_circle</span>
 <span>Watch Discourses on YouTube</span>
 </a>
-<a class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-surface-muted text-primary border border-border-subtle text-xs font-semibold tracking-wider uppercase transition-all duration-300 shadow-sm hover:shadow hover:-translate-y-0.5" href="events.html">
-<span class="material-symbols-outlined text-lg text-primary">event</span>
-<span>Attend a Satsang</span>
+<a class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-surface-muted text-primary border border-border-subtle text-xs font-semibold tracking-wider uppercase transition-all duration-300 shadow-sm hover:shadow hover:-translate-y-0.5" href="uttam-jnan.html">
+<span class="material-symbols-outlined text-lg text-primary">auto_stories</span>
+<span>Read His Story</span>
 </a>
 </div>
 </div>
@@ -427,6 +435,7 @@
 <section class="bg-midnight-blue py-28 text-white relative overflow-hidden lg:min-h-[calc(100vh-5rem)] lg:flex lg:items-center" id="wisdom">
 <!-- Multi-layered Ambient Glow and Sparkles -->
 <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-royal-blue/40 via-midnight-blue to-midnight-blue pointer-events-none transition-transform duration-1000" id="wisdom-glow"></div>
+<div class="wisdom-photo absolute inset-0 pointer-events-none"><img alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.remove()" src="assets/photos/wisdom.jpg"/></div>
 <!-- Ethereal Sparkle Orbs -->
 <div class="ethereal-sparkle w-24 h-24 top-12 left-1/4" style="animation-delay: 0s;"></div>
 <div class="ethereal-sparkle w-32 h-32 bottom-16 right-1/4" style="animation-delay: 2.5s;"></div>
@@ -618,6 +627,24 @@
 </div>
 </div>
 </section>
+<!-- MOMENTS OF GRACE (GALLERY) -->
+<section class="max-w-7xl mx-auto px-6 lg:px-10 py-24" id="gallery">
+<div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-14 reveal-node">
+<div>
+<span class="text-xs font-bold uppercase tracking-[0.2em] text-gold block mb-3">Moments of Grace • ಚಿತ್ರಸಂಗ್ರಹ</span>
+<h2 class="font-display text-3xl sm:text-5xl font-semibold text-primary-dark tracking-tight">Life at the Foundation</h2>
+</div>
+<p class="text-sm text-on-surface-variant max-w-sm">Satsang, practice and seva through the year at Hubballi. Select a photograph to see it in full.</p>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-6 items-start" data-gallery="">
+<figure class="photo-slot col-span-2 lg:col-span-5 aspect-[4/5] rounded-2xl gallery-item" data-speed="-5"><img alt="Sunday satsang" loading="lazy" onerror="this.remove()" src="assets/photos/gallery-1.jpg"/><figcaption class="photo-slot-label"><span class="material-symbols-outlined">photo_camera</span><span>Sunday satsang</span></figcaption></figure>
+<figure class="photo-slot lg:col-span-4 aspect-[4/3] lg:mt-24 rounded-2xl gallery-item" data-speed="7"><img alt="Morning practice" loading="lazy" onerror="this.remove()" src="assets/photos/gallery-2.jpg"/><figcaption class="photo-slot-label"><span class="material-symbols-outlined">photo_camera</span><span>Morning practice</span></figcaption></figure>
+<figure class="photo-slot lg:col-span-3 aspect-[3/4] rounded-2xl gallery-item" data-speed="-9"><img alt="Guru pooja" loading="lazy" onerror="this.remove()" src="assets/photos/gallery-3.jpg"/><figcaption class="photo-slot-label"><span class="material-symbols-outlined">photo_camera</span><span>Guru pooja</span></figcaption></figure>
+<figure class="photo-slot lg:col-span-3 aspect-[3/4] rounded-2xl gallery-item" data-speed="5"><img alt="Annadana kitchen" loading="lazy" onerror="this.remove()" src="assets/photos/gallery-4.jpg"/><figcaption class="photo-slot-label"><span class="material-symbols-outlined">photo_camera</span><span>Annadana kitchen</span></figcaption></figure>
+<figure class="photo-slot col-span-2 lg:col-span-5 aspect-[16/10] rounded-2xl gallery-item" data-speed="-6"><img alt="Full-moon meditation" loading="lazy" onerror="this.remove()" src="assets/photos/gallery-5.jpg"/><figcaption class="photo-slot-label"><span class="material-symbols-outlined">photo_camera</span><span>Full-moon meditation</span></figcaption></figure>
+<figure class="photo-slot lg:col-span-4 aspect-[4/5] lg:-mt-16 rounded-2xl gallery-item" data-speed="9"><img alt="Navaratri sadhana" loading="lazy" onerror="this.remove()" src="assets/photos/gallery-6.jpg"/><figcaption class="photo-slot-label"><span class="material-symbols-outlined">photo_camera</span><span>Navaratri sadhana</span></figcaption></figure>
+</div>
+</section>
 <!-- DANA & SACRED SEVA / NEWSLETTER SECTION -->
 <section class="max-w-7xl mx-auto px-6 lg:px-10 py-24" id="dana">
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
@@ -728,11 +755,13 @@
 <!-- Quick Links -->
 <div class="flex flex-col gap-2.5 text-xs">
 <div class="text-gold-light font-semibold uppercase tracking-wider mb-2">Foundation</div>
-<a class="text-white/70 hover:text-white transition" href="#about">About Aroodha</a>
-<a class="text-white/70 hover:text-white transition" href="#founder">Uttam Jnan Wisdom</a>
-<a class="text-white/70 hover:text-white transition" href="#pillars">The Three Pillars</a>
-<a class="text-white/70 hover:text-white transition" href="#paths">Curriculum of Practice</a>
-<a class="text-white/70 hover:text-white transition" href="#satsangs">Satsang Calendar</a>
+<a class="text-white/70 hover:text-white transition" href="about.html">About Aroodha</a>
+<a class="text-white/70 hover:text-white transition" href="uttam-jnan.html">Uttam Jnan</a>
+<a class="text-white/70 hover:text-white transition" href="programs.html">Programmes</a>
+<a class="text-white/70 hover:text-white transition" href="online.html">Online Membership</a>
+<a class="text-white/70 hover:text-white transition" href="events.html">Events Calendar</a>
+<a class="text-white/70 hover:text-white transition" href="donate.html">Give Dana</a>
+<a class="text-white/70 hover:text-white transition" href="contact.html">Contact</a>
 </div>
 <!-- Contact & Sanctuary Base -->
 <div class="flex flex-col gap-2.5 text-xs">
@@ -770,7 +799,7 @@
 <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-white/50">
 <div>© 2026 Aroodha Foundation (ಆರೂಢ ಫೌಂಡೇಶನ್). Dedicated to spiritual welfare.</div>
 <div class="flex items-center gap-6">
-<a class="hover:text-white transition" href="#founder">Hubballi Sanctuary Base</a>
+<a class="hover:text-white transition" href="contact.html">Write to the Foundation</a>
 </div>
 </div>
 </div>

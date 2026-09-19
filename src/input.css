@@ -4,9 +4,22 @@
 
 /* Custom styles from the Stitch "Sacred Modernity" design */
 html { scroll-padding-top: 6rem; }
+/* Theme tokens (rgb triplets): morning by default, evening via html.evening */
+:root {
+  --c-surface: 248 250 252; --c-surface-pure: 255 255 255; --c-surface-warm: 251 251 248;
+  --c-surface-muted: 241 244 248; --c-on-surface: 25 28 33; --c-on-surface-variant: 83 89 103;
+  --c-border-subtle: 226 230 237;
+}
+html.evening {
+  --c-surface: 8 17 36; --c-surface-pure: 12 24 49; --c-surface-warm: 15 28 55;
+  --c-surface-muted: 21 37 70; --c-on-surface: 229 233 241; --c-on-surface-variant: 160 171 193;
+  --c-border-subtle: 33 50 84;
+  color-scheme: dark;
+}
 html, body {
-  background-color: #f8fafc;
-  color: #191c21;
+  background-color: rgb(var(--c-surface));
+  color: rgb(var(--c-on-surface));
+  transition: background-color 0.6s ease, color 0.6s ease;
   font-family: 'Plus Jakarta Sans', sans-serif;
   overflow-x: clip; /* not hidden: hidden makes body a scroll container and breaks the sticky header */
 }
@@ -27,8 +40,8 @@ html, body {
   border: 1px solid rgba(201, 154, 62, 0.25);
 }
 .hero-pattern {
-  background-color: #f8fafc;
-  background-image: radial-gradient(#143575 0.65px, transparent 0.65px), radial-gradient(#c99a3e 0.65px, #f8fafc 0.65px);
+  background-color: rgb(var(--c-surface));
+  background-image: radial-gradient(#143575 0.65px, transparent 0.65px), radial-gradient(#c99a3e 0.65px, rgb(var(--c-surface)) 0.65px);
   background-size: 32px 32px;
   background-position: 0 0, 16px 16px;
 }
@@ -123,8 +136,8 @@ html, body {
 /* Animated Golden Border for Lineage Quote */
 .lineage-quote-box {
   position: relative;
-  background: #f8fafc;
-  border: 1px solid rgba(226, 230, 237, 0.9);
+  background: rgb(var(--c-surface));
+  border: 1px solid rgb(var(--c-border-subtle));
   border-left: 4px solid #c99a3e;
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -206,3 +219,61 @@ html.is-loading #veil, #veil.is-active { display: flex; }
 /* Eyebrow labels with drawn hairlines */
 .eyebrow-drawn { display: flex; align-items: center; gap: 0.75rem; }
 .eyebrow-rule { display: block; width: 1.75rem; height: 1px; background: currentColor; transform-origin: left center; flex: none; }
+
+/* ── Evening mode: remap the hard-coded light colours ─────────── */
+html.evening .bg-white { background-color: rgb(var(--c-surface-pure)); }
+html.evening .bg-white\/90 { background-color: rgb(var(--c-surface-pure) / 0.9); }
+html.evening .text-primary, html.evening .text-primary-dark,
+html.evening .hover\:text-primary:hover, html.evening .group:hover .group-hover\:text-royal-blue { color: #eef2fa; }
+html.evening .group:hover .group-hover\:text-royal-blue { color: #dfb76c; }
+html.evening .bg-primary { background-color: #1a3a78; }
+html.evening .hover\:bg-royal-blue:hover { background-color: #22478f; }
+html.evening .bg-blue-50 { background-color: rgb(30 61 122 / 0.45); }
+html.evening .bg-gold-pale { background-color: rgb(201 154 62 / 0.12); }
+html.evening .border-white { border-color: rgb(var(--c-surface-muted)); }
+html.evening .hero-pattern { opacity: 0.18; }
+html.evening .hover\:bg-primary:hover { background-color: #1a3a78; }
+
+/* ── Photo placeholders: a real image at the same path covers the label ── */
+.photo-slot {
+  position: relative; overflow: hidden; margin: 0;
+  background:
+    radial-gradient(circle at 25% 20%, rgb(201 154 62 / 0.16), transparent 55%),
+    linear-gradient(135deg, rgb(var(--c-surface-muted)), rgb(var(--c-surface-warm)));
+  border: 1px solid rgb(var(--c-border-subtle));
+}
+.photo-slot::before {
+  content: ''; position: absolute; inset: 0; opacity: 0.55;
+  background-image: radial-gradient(rgb(201 154 62 / 0.35) 0.7px, transparent 0.7px);
+  background-size: 18px 18px;
+}
+.photo-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+.photo-slot-label {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.5rem; padding: 1rem; text-align: center;
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgb(var(--c-on-surface-variant));
+}
+.photo-slot-label .material-symbols-outlined { font-size: 1.75rem; letter-spacing: 0; color: #c99a3e; }
+.photo-slot.is-dark { background: linear-gradient(135deg, #0f2140, #0a1832); border-color: rgb(255 255 255 / 0.1); }
+.photo-slot.is-dark .photo-slot-label { color: rgb(255 255 255 / 0.55); }
+.gallery-item:has(img) { cursor: zoom-in; }
+.hero-photo-shade { background: linear-gradient(to top, rgb(8 20 43 / 0.55), transparent 60%); opacity: 0; z-index: 2; }
+.wisdom-photo img { opacity: 0.32; mix-blend-mode: luminosity; }
+
+/* Founder timeline dots light up as the gold line reaches them */
+.timeline-dot { transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease; }
+.timeline-stage.is-lit .timeline-dot { background-color: #c99a3e; color: #08142b; box-shadow: 0 0 0 6px rgb(201 154 62 / 0.18); }
+
+/* Seeker's path: steps not yet reached sit back a little (desktop, motion only) */
+.hscroll-dot { transition: background-color 0.4s ease; }
+.hscroll-step.is-lit .hscroll-dot { background-color: #c99a3e; }
+
+/* Lightbox (site.js) */
+#lightbox { position: fixed; inset: 0; z-index: 90; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; padding: 2rem; background: rgb(8 20 43 / 0.94); }
+#lightbox.is-open { display: flex; }
+#lightbox img { max-width: min(92vw, 1400px); max-height: 80vh; border-radius: 1rem; box-shadow: 0 30px 80px rgb(0 0 0 / 0.5); }
+
+/* Breathing guide (site.js) */
+.breath-orb { transition-property: transform; transition-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+@media (prefers-reduced-motion: reduce) { .breath-orb { transition: none !important; transform: none !important; } }

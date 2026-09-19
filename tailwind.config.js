@@ -1,4 +1,5 @@
-// Design tokens from the Stitch "Sacred Modernity" design.
+// Design tokens from the Stitch "Sacred Modernity" design. Surface and text tokens are
+// CSS variables (src/input.css) so the evening theme can swap them.
 // Rebuild assets/site.css after changing this or any page: ./build-css.ps1
 module.exports = {
   content: ['./*.html', './assets/site.js', './assets/motion.js'],
@@ -18,13 +19,13 @@ module.exports = {
           dim: '#b5872c',
           pale: '#f8f3ea'
         },
-        'surface': '#f8fafc',
-        'surface-pure': '#ffffff',
-        'surface-warm': '#fbfbf8',
-        'surface-muted': '#f1f4f8',
-        'on-surface': '#191c21',
-        'on-surface-variant': '#535967',
-        'border-subtle': '#e2e6ed'
+        'surface': 'rgb(var(--c-surface) / <alpha-value>)',
+        'surface-pure': 'rgb(var(--c-surface-pure) / <alpha-value>)',
+        'surface-warm': 'rgb(var(--c-surface-warm) / <alpha-value>)',
+        'surface-muted': 'rgb(var(--c-surface-muted) / <alpha-value>)',
+        'on-surface': 'rgb(var(--c-on-surface) / <alpha-value>)',
+        'on-surface-variant': 'rgb(var(--c-on-surface-variant) / <alpha-value>)',
+        'border-subtle': 'rgb(var(--c-border-subtle) / <alpha-value>)'
       },
       fontFamily: {
         'serif': ['EB Garamond', 'serif'],

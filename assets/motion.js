@@ -33,6 +33,7 @@
 
   // ── Smooth scroll ─────────────────────────────────────────────
   const lenis = new Lenis({ lerp: 0.085, anchors: { offset: -96 } });
+  window.__lenis = lenis;
   root.classList.remove('scroll-smooth');
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(time => lenis.raf(time * 1000));
@@ -113,7 +114,9 @@
 
   const hero = $('main > section');
   const isEyebrow = el => el.tagName === 'SPAN' && el.classList.contains('uppercase') && /tracking-\[0\.2(5)?em\]/.test(el.className);
-  const heroBits = hero ? $$('.relative > *', hero).filter(el =>
+  // Direct children of the hero's content container only (nested .relative blocks keep their own motion).
+  const heroInner = hero ? [...hero.children].find(el => el.classList.contains('relative')) : null;
+  const heroBits = heroInner ? [...heroInner.children].filter(el =>
     el.tagName !== 'H1' && !isEyebrow(el) && !el.classList.contains('reveal-node') && !el.querySelector('.reveal-node, h1')) : [];
   if (heroBits.length) gsap.set(heroBits, { opacity: 0, y: 26 });
 
@@ -133,8 +136,8 @@
       drawIn(heroMandala, { duration: 2.6, delay: 0.1 });
       gsap.to(heroMandala, { rotation: 50, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
       if (hero.id === 'hero-section') {
-        gsap.to($('.relative', hero), {
-          y: 110, opacity: 0.2, ease: 'none',
+        gsap.to([...heroInner.children].filter(el => !el.matches('[data-hero-photo], .grid')), {
+          y: 110, opacity: 0.15, ease: 'none',
           scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true }
         });
       }
@@ -206,6 +209,9 @@
           .fromTo(wm.children, { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.01 }, 0)
           .fromTo(wm, { rotation: -30, scale: 0.9 }, { rotation: 20, scale: 1.05 }, 0)
           .fromTo('#wisdom-glow', { scale: 1 }, { scale: 1.25 }, 0);
+        if ($('.wisdom-photo', wisdom)) {
+          tl.fromTo($('.wisdom-photo', wisdom), { clipPath: 'circle(0% at 50% 30%)' }, { clipPath: 'circle(80% at 50% 30%)' }, 0);
+        }
         return () => split.revert();
       });
       mm.add('(max-width: 1023px)', () => {
@@ -276,10 +282,100 @@
     ScrollTrigger.refresh();
   })));
 
-  // ── Founder portrait opens out of a smaller frame (Nabil Issa / Cocoon) ──
-  const portrait = $('#portrait-card');
-  if (portrait) {
-    const img = $('#founder-img');
+
+  // ── Home hero photo: the frame widens as it arrives, the photo zooms out and the shade deepens ──
+  const heroPhoto = $('[data-hero-photo]');
+  if (heroPhoto) {
+    const img = $('img', heroPhoto);
+    gsap.fromTo(heroPhoto, { scale: 0.9 }, {
+      scale: 1, ease: 'none',
+      scrollTrigger: { trigger: heroPhoto, start: 'top bottom', end: 'center 45%', scrub: true }
+    });
+    const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: heroPhoto, start: 'top bottom', end: 'bottom top', scrub: true } });
+    if (img) tl.fromTo(img, { scale: 1.25 }, { scale: 1 }, 0);
+    tl.fromTo($('.hero-photo-shade', heroPhoto), { opacity: 0 }, { opacity: 1 }, 0);
+  }
+
+  // ── Photos open out of a smaller frame (programme banners, page bands) ──
+  $$('[data-photo-open]').forEach(fig => {
+    const radius = getComputedStyle(fig).borderRadius || '1rem';
+    const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: fig, start: 'top 95%', end: 'center 55%', scrub: 1 } });
+    tl.fromTo(fig, { clipPath: `inset(8% 10% 8% 10% round ${radius})` }, { clipPath: `inset(0% 0% 0% 0% round ${radius})` });
+    const img = $('img', fig);
+    if (img) tl.fromTo(img, { scale: 1.2 }, { scale: 1 }, 0);
+  });
+
+  // ── Gallery: photographs rise in, then drift at their own depths ──
+  const galleryItems = $$('[data-gallery] > figure');
+  if (galleryItems.length) {
+    gsap.set(galleryItems, { opacity: 0, y: 60 });
+    ScrollTrigger.batch(galleryItems, {
+      start: 'top 92%', once: true,
+      onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, duration: 1.3, stagger: 0.12 })
+    });
+    mm.add(wide, () => {
+      galleryItems.forEach(fig => {
+        const s = parseFloat(fig.dataset.speed) || 0;
+        gsap.fromTo(fig, { yPercent: s }, {
+          yPercent: -s, ease: 'none',
+          scrollTrigger: { trigger: fig.parentElement, start: 'top bottom', end: 'bottom top', scrub: true }
+        });
+      });
+    });
+  }
+
+  // ── The seeker's path: pinned, scrolled sideways, a gold line drawn along it (Tillberg) ──
+  const hscroll = $('[data-hscroll]');
+  if (hscroll) {
+    mm.add(wide, () => {
+      const track = $('[data-hscroll-track]', hscroll);
+      const line = $('[data-hscroll-line]', hscroll);
+      const steps = $$('.hscroll-step', hscroll);
+      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const pinned = { trigger: hscroll, start: 'top 80px', end: () => '+=' + distance(), scrub: 1, invalidateOnRefresh: true };
+      const move = gsap.to(track, { x: () => -distance(), ease: 'none', scrollTrigger: { ...pinned, pin: true } });
+      if (line) gsap.fromTo(line, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: pinned });
+      steps.forEach(step => {
+        gsap.set(step, { opacity: 0.35 });
+        ScrollTrigger.create({
+          trigger: step, containerAnimation: move, start: 'left 70%',
+          onEnter: () => { step.classList.add('is-lit'); gsap.to(step, { opacity: 1, duration: 0.8 }); },
+          onLeaveBack: () => { step.classList.remove('is-lit'); gsap.to(step, { opacity: 0.35, duration: 0.6 }); }
+        });
+      });
+      return () => { gsap.set(steps, { clearProps: 'opacity' }); steps.forEach(st => st.classList.remove('is-lit')); };
+    });
+  }
+
+  // ── Founder timeline: a gold line draws down; each chapter's dot lights as it's reached ──
+  const timeline = $('[data-timeline]');
+  if (timeline) {
+    gsap.fromTo($('[data-timeline-line]', timeline), { scaleY: 0 }, {
+      scaleY: 1, ease: 'none',
+      scrollTrigger: { trigger: timeline, start: 'top 65%', end: 'bottom 65%', scrub: true }
+    });
+    $$('[data-stage]', timeline).forEach(stage => ScrollTrigger.create({
+      trigger: stage, start: 'top 65%', toggleClass: { targets: stage, className: 'is-lit' }
+    }));
+  }
+
+  // ── Event posters tilt toward the cursor like printed cards ──
+  if (finePointer) {
+    $$('[data-tilt]').forEach(wrap => {
+      const img = $('img', wrap);
+      if (!img) return;
+      wrap.addEventListener('mousemove', (e) => {
+        const r = wrap.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(img, { rotationY: px * 12, rotationX: -py * 12, transformPerspective: 900, duration: 0.6, ease: 'power3.out' });
+      });
+      wrap.addEventListener('mouseleave', () => gsap.to(img, { rotationX: 0, rotationY: 0, duration: 1.1, ease: 'elastic.out(1, 0.5)' }));
+    });
+  }
+
+  // ── Founder portraits open out of a smaller frame (Nabil Issa / Cocoon) ──
+  $$('#portrait-card, [data-portrait]').forEach(portrait => {
+    const img = $('img', portrait);
     img.style.transition = 'none';
     gsap.timeline({
       defaults: { ease: 'none' },
@@ -287,7 +383,7 @@
     })
       .fromTo(portrait, { clipPath: 'inset(14% 14% 14% 14% round 1rem)' }, { clipPath: 'inset(0% 0% 0% 0% round 1rem)' })
       .fromTo(img, { scale: 1.3 }, { scale: 1 }, 0);
-  }
+  });
 
   // ── Imagery sharpens from a soft blur as it arrives (Kalam) ──
   $$('main article img, [data-sharpen]').forEach(img => {

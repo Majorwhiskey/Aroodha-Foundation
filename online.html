@@ -10,7 +10,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;family=EB+Garamond:ital,wght@0,400..700;1,400..700&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..700;1,300..700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('is-loading');window.__veilTimer=setTimeout(function(){document.documentElement.classList.remove('is-loading')},3000)}</script>
+<script>(function(){var d=document.documentElement,t;try{t=localStorage.getItem('aroodha-theme')}catch(e){}if(!t){var n=new Date(),h=n.getHours()+n.getMinutes()/60;t=(h>=18.5||h<5)?'evening':'morning'}if(t==='evening')d.classList.add('evening');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-loading');window.__veilTimer=setTimeout(function(){d.classList.remove('is-loading')},3000)}})()</script>
 <link href="assets/site.css" rel="stylesheet"/>
 </head>
 <body class="antialiased selection:bg-gold-pale selection:text-primary-dark">
@@ -20,42 +20,45 @@
 <!-- TOP SACRED BANNER -->
 <aside aria-label="Announcement" class="bg-midnight-blue text-gold-soft py-2 px-4 text-center text-xs tracking-wider border-b border-gold/20 flex items-center justify-center gap-2 relative z-50">
 <span class="w-1.5 h-1.5 rounded-full bg-gold inline-block animate-pulse"></span>
-<span class="font-medium">Daily Sadhana Broadcast: 5:30 AM &amp; 7:00 PM IST</span>
+<span class="font-medium" id="banner-countdown">Daily Sadhana Broadcast: 5:30 AM &amp; 7:00 PM IST</span>
 <span class="text-gold/40">|</span>
-<a class="underline underline-offset-2 hover:text-white transition" href="online.html">Join the Morning Sanctuary →</a>
+<a class="underline underline-offset-2 hover:text-white transition whitespace-nowrap" href="online.html">Join the Morning Sanctuary →</a>
 </aside>
 <!-- NAVIGATION BAR -->
 <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-border-subtle transition-all duration-300" id="main-nav">
-<div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between gap-6">
+<div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 h-20 flex items-center justify-between gap-3 sm:gap-6">
 <!-- Brand Identity -->
-<a class="flex items-center gap-3.5 group" href="index.html">
+<a class="flex items-center gap-2.5 sm:gap-3.5 group min-w-0" href="index.html">
 <div class="w-11 h-11 rounded-full bg-primary flex items-center justify-center shadow-md border border-gold/30 group-hover:scale-105 group-hover:bg-royal-blue transition duration-300">
 <span class="material-symbols-outlined text-gold-light text-2xl group-hover:rotate-12 transition-transform duration-500">spa</span>
 </div>
 <div class="flex flex-col">
 <div class="flex items-baseline gap-2">
-<span class="font-serif text-2xl font-bold tracking-tight text-primary">AROODHA</span>
-<span class="font-serif text-gold font-semibold text-lg">ಆರೂಢ</span>
+<span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-primary">AROODHA</span>
+<span class="font-serif text-gold font-semibold text-base sm:text-lg">ಆರೂಢ</span>
 </div>
 <span class="hidden sm:block whitespace-nowrap text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-semibold">Hubballi • Foundation of Inner Truth</span>
 </div>
 </a>
 <!-- Desktop Navigation Links -->
 <nav class="hidden xl:flex items-center gap-7 text-sm font-medium text-on-surface-variant whitespace-nowrap">
-<a class="hover:text-primary transition-colors" href="index.html#about">About</a>
-<a class="hover:text-primary transition-colors" href="index.html#founder">Uttam Jnan</a>
+<a class="hover:text-primary transition-colors" href="about.html">About</a>
+<a class="hover:text-primary transition-colors" href="uttam-jnan.html">Uttam Jnan</a>
 <a class="hover:text-primary transition-colors" href="programs.html">Programmes</a>
 <a aria-current="page" class="text-primary font-semibold transition-colors" href="online.html">Online</a>
 <a class="hover:text-primary transition-colors" href="events.html">Events</a>
 <a class="hover:text-primary transition-colors" href="contact.html">Contact</a>
 </nav>
-<!-- Support CTA -->
-<div class="flex items-center gap-3">
-<a class="hidden sm:inline-flex items-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-full bg-primary hover:bg-royal-blue text-white text-xs font-semibold tracking-wider uppercase transition shadow-md hover:shadow-lg hover:-translate-y-0.5 border border-primary/20" href="index.html#dana">
+<!-- Theme + Support CTA -->
+<div class="flex items-center gap-2 sm:gap-3 shrink-0">
+<button aria-label="Switch to evening mode" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-border-subtle bg-white text-primary flex items-center justify-center hover:border-gold/60 transition" id="theme-toggle" title="Evening mode" type="button">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<a class="hidden sm:inline-flex items-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-full bg-primary hover:bg-royal-blue text-white text-xs font-semibold tracking-wider uppercase transition shadow-md hover:shadow-lg hover:-translate-y-0.5 border border-primary/20" href="donate.html">
 <span>Support the Seva / ದಾನ</span>
 <span class="material-symbols-outlined text-sm text-gold-soft">volunteer_activism</span>
 </a>
-<button aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="xl:hidden w-11 h-11 rounded-full border border-border-subtle bg-white text-primary flex items-center justify-center" id="menu-toggle" type="button">
+<button aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="xl:hidden w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-border-subtle bg-white text-primary flex items-center justify-center" id="menu-toggle" type="button">
 <span class="material-symbols-outlined">menu</span>
 </button>
 </div>
@@ -63,13 +66,13 @@
 <!-- Mobile Navigation -->
 <nav class="hidden xl:hidden border-t border-border-subtle bg-white" id="mobile-menu">
 <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col text-sm font-medium text-on-surface-variant">
-<a class="py-3 border-b border-border-subtle hover:text-primary" href="index.html#about">About</a>
-<a class="py-3 border-b border-border-subtle hover:text-primary" href="index.html#founder">Uttam Jnan</a>
+<a class="py-3 border-b border-border-subtle hover:text-primary" href="about.html">About</a>
+<a class="py-3 border-b border-border-subtle hover:text-primary" href="uttam-jnan.html">Uttam Jnan</a>
 <a class="py-3 border-b border-border-subtle hover:text-primary" href="programs.html">Programmes</a>
 <a aria-current="page" class="py-3 border-b border-border-subtle text-primary font-semibold" href="online.html">Online</a>
 <a class="py-3 border-b border-border-subtle hover:text-primary" href="events.html">Events</a>
 <a class="py-3 border-b border-border-subtle hover:text-primary" href="contact.html">Contact</a>
-<a class="mt-4 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-primary text-white text-xs font-semibold tracking-wider uppercase" href="index.html#dana">Support the Seva / ದಾನ</a>
+<a class="mt-4 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-primary text-white text-xs font-semibold tracking-wider uppercase" href="donate.html">Support the Seva / ದಾನ</a>
 </div>
 </nav>
 </header>
@@ -331,11 +334,12 @@ Sadhana, <span class="italic font-normal text-gold-dim">streamed daily.</span>
 <!-- Quick Links -->
 <div class="flex flex-col gap-2.5 text-xs">
 <div class="text-gold-light font-semibold uppercase tracking-wider mb-2">Foundation</div>
-<a class="text-white/70 hover:text-white transition" href="index.html#about">About Aroodha</a>
-<a class="text-white/70 hover:text-white transition" href="index.html#founder">Uttam Jnan</a>
+<a class="text-white/70 hover:text-white transition" href="about.html">About Aroodha</a>
+<a class="text-white/70 hover:text-white transition" href="uttam-jnan.html">Uttam Jnan</a>
 <a class="text-white/70 hover:text-white transition" href="programs.html">Programmes</a>
 <a class="text-white/70 hover:text-white transition" href="online.html">Online Membership</a>
 <a class="text-white/70 hover:text-white transition" href="events.html">Events Calendar</a>
+<a class="text-white/70 hover:text-white transition" href="donate.html">Give Dana</a>
 <a class="text-white/70 hover:text-white transition" href="contact.html">Contact</a>
 </div>
 <!-- Contact & Sanctuary Base -->
