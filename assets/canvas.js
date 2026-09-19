@@ -4,8 +4,9 @@
 // lines of arithmetic, and it scrubs backwards exactly as smoothly as forwards.
 //
 //   noise  – "Sit until the noise gets bored of you": turbulent water settles to stillness
-//   nada   – Chladni figures: the zero-set of cos(nπx)cos(mπy) − cos(mπx)cos(nπy), morphing
-//            through vibration modes, traced with marching squares
+//   mantra – the Pavamana mantra written in points of light, line by line, as the field
+//            dawns from darkness to light
+//   neti   – "not this, not this": drifting thoughts let go one by one until ಸತ್ಯ remains
 //   mala   – japa: 108 beads and the guru bead, lit one by one
 //   lotus  – a lotus bud rises from the water and opens, reflected below
 //
@@ -76,69 +77,156 @@
     }
   }
 
-  // ── nada: Chladni plate figures traced with marching squares ─────────────────
-  const MODES = [[1, 2], [2, 3], [1, 4], [3, 5], [2, 7], [4, 7], [5, 9], [3, 11]];
-  const G = 128;
-  const field = new Float32Array((G + 1) * (G + 1));
-  function nada(ctx, W, H, p) {
-    const c = palette(false);
-    const t = p * (MODES.length - 1);
-    const k = Math.min(MODES.length - 2, Math.floor(t));
-    const f = smooth(0.15, 0.85, t - k);
-    const n = lerp(MODES[k][0], MODES[k + 1][0], f);
-    const m = lerp(MODES[k][1], MODES[k + 1][1], f);
-    const S = Math.min(W, H) * 0.94, ox = (W - S) / 2, oy = (H - S) / 2, cell = S / G, R = S / 2;
-    const PI = Math.PI;
-    for (let j = 0; j <= G; j++) {
-      const y = j / G;
-      const cny = Math.cos(n * PI * y), cmy = Math.cos(m * PI * y);
-      for (let i = 0; i <= G; i++) {
-        const x = i / G;
-        field[j * (G + 1) + i] = Math.cos(n * PI * x) * cmy - Math.cos(m * PI * x) * cny;
+  // ── mantra: the Pavamana mantra written in points of light ───────────────────
+  // Each line is rendered once to an offscreen canvas and sampled into N points;
+  // p decides which two lines the points are travelling between and how far.
+  const KANNADA = '"Noto Serif Kannada", "Nirmala UI", "Tunga", serif';
+  const MANTRA = [
+    ['ಅಸತೋ ಮಾ ಸದ್ಗಮಯ', 'Lead me from the unreal to the real'],
+    ['ತಮಸೋ ಮಾ ಜ್ಯೋತಿರ್ಗಮಯ', 'Lead me from darkness to light'],
+    ['ಮೃತ್ಯೋರ್ಮಾ ಅಮೃತಂ ಗಮಯ', 'Lead me from death to immortality'],
+    ['ಓಂ ಶಾಂತಿಃ ಶಾಂತಿಃ ಶಾಂತಿಃ', 'Om — peace, peace, peace']
+  ];
+  // [start of the move into line k, moment it has fully formed, moment it starts to leave]
+  const STAGES = [[0.02, 0.14, 0.28], [0.28, 0.42, 0.52], [0.52, 0.66, 0.76], [0.76, 0.9, 1.01]];
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+  function sampleText(text, W, H, N) {
+    const off = document.createElement('canvas');
+    off.width = Math.ceil(W); off.height = Math.ceil(H);
+    const o = off.getContext('2d');
+    o.font = `600 100px ${KANNADA}`;
+    const size = Math.min(H * 0.17, 100 * (W * 0.84) / o.measureText(text).width);
+    o.font = `600 ${size}px ${KANNADA}`;
+    o.textAlign = 'center';
+    o.textBaseline = 'middle';
+    o.fillStyle = '#fff';
+    o.fillText(text, W / 2, H * 0.46);
+    const data = o.getImageData(0, 0, off.width, off.height).data;
+    const step = Math.max(2, Math.round(size / 40));
+    const hits = [];
+    for (let y = 0; y < off.height; y += step) {
+      for (let x = 0; x < off.width; x += step) {
+        if (data[(y * off.width + x) * 4 + 3] > 140) hits.push(x, y);
       }
     }
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(W / 2, H / 2, R, 0, TAU);
-    ctx.clip();
-    // faint fill so the plate reads as an object
-    const plate = ctx.createRadialGradient(W / 2, H / 2, R * 0.1, W / 2, H / 2, R);
-    plate.addColorStop(0, c.gold(0.07));
-    plate.addColorStop(1, c.gold(0.015));
-    ctx.fillStyle = plate;
-    ctx.fillRect(ox, oy, S, S);
-    const trace = (level, width, alpha) => {
-      ctx.beginPath();
-      const at = (i, j) => field[j * (G + 1) + i] - level;
-      const cross = (a, b) => a / (a - b);
-      for (let j = 0; j < G; j++) {
-        for (let i = 0; i < G; i++) {
-          const a = at(i, j), b = at(i + 1, j), d = at(i, j + 1), e = at(i + 1, j + 1);
-          const pts = [];
-          if ((a > 0) !== (b > 0)) pts.push([i + cross(a, b), j]);
-          if ((b > 0) !== (e > 0)) pts.push([i + 1, j + cross(b, e)]);
-          if ((d > 0) !== (e > 0)) pts.push([i + cross(d, e), j + 1]);
-          if ((a > 0) !== (d > 0)) pts.push([i, j + cross(a, d)]);
-          for (let q = 0; q + 1 < pts.length; q += 2) {
-            ctx.moveTo(ox + pts[q][0] * cell, oy + pts[q][1] * cell);
-            ctx.lineTo(ox + pts[q + 1][0] * cell, oy + pts[q + 1][1] * cell);
-          }
-        }
-      }
-      ctx.lineWidth = width;
-      ctx.strokeStyle = c.gold(alpha);
-      ctx.stroke();
-    };
-    trace(0.45, 0.8, 0.18);
-    trace(-0.45, 0.8, 0.18);
-    trace(0, 1.8, 0.85);
-    ctx.restore();
-    ctx.beginPath();
-    ctx.arc(W / 2, H / 2, R, 0, TAU);
-    ctx.strokeStyle = c.gold(0.45);
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    return `Mode ${n.toFixed(2)} : ${m.toFixed(2)}`;
+    const count = hits.length / 2;
+    const xs = new Float32Array(N), ys = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+      const k = count ? Math.floor(hash(i * 3.7 + text.length) * count) : 0;
+      xs[i] = (hits[k * 2] || W / 2) + (hash(i + 7) - 0.5) * step * 0.8;
+      ys[i] = (hits[k * 2 + 1] || H / 2) + (hash(i + 13) - 0.5) * step * 0.8;
+    }
+    return { xs, ys, size };
+  }
+
+  function mantra(ctx, W, H, p) {
+    const cv = ctx.canvas;
+    const N = W < 700 ? 1800 : 3400;
+    if (!cv._pts || cv._pts.W !== W || cv._pts.H !== H || cv._pts.stale) {
+      cv._pts = { W, H, lines: MANTRA.map(([k]) => sampleText(k, W, H, N)) };
+    }
+    const sets = cv._pts.lines;
+    const c = palette(true);
+    // dawn: the dark field warms from the centre as the mantra moves toward light
+    const light = smooth(0.3, 0.62, p) * (1 - 0.35 * smooth(0.8, 1, p));
+    const glow = ctx.createRadialGradient(W / 2, H * 0.46, 0, W / 2, H * 0.46, Math.max(W, H) * lerp(0.25, 0.75, smooth(0.25, 0.7, p)));
+    glow.addColorStop(0, `rgba(201,154,62,${0.04 + 0.3 * light})`);
+    glow.addColorStop(0.5, `rgba(120,86,28,${0.02 + 0.14 * light})`);
+    glow.addColorStop(1, 'rgba(8,20,43,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+
+    // which line are we leaving, which are we forming, and how far along
+    let from = -1, to = 0, t = 0;
+    for (let k = 0; k < STAGES.length; k++) {
+      const [s, f] = STAGES[k];
+      if (p >= s) { from = k - 1; to = k; t = clamp((p - s) / (f - s)); }
+    }
+    if (p < STAGES[0][0]) { from = -1; to = 0; t = 0; }
+    const A = from >= 0 ? sets[from] : null, B = sets[to];
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < N; i++) {
+      const delay = hash(i + 101) * 0.35;
+      const ti = easeInOut(clamp((t - delay) / 0.65));
+      const ax = A ? A.xs[i] : hash(i + 211) * W, ay = A ? A.ys[i] : hash(i + 307) * H;
+      const bx = B.xs[i], by = B.ys[i];
+      const swirl = Math.sin(Math.PI * ti) * (hash(i + 401) - 0.5) * H * 0.35;
+      const x = lerp(ax, bx, ti) + swirl * 0.6;
+      const y = lerp(ay, by, ti) + swirl;
+      const twinkle = 0.7 + 0.3 * Math.sin(i * 12.9898 + p * 60);
+      const settled = !A ? ti : 1;
+      const a = (0.3 + 0.7 * settled) * twinkle;
+      const r = (A || ti > 0.9 ? 1.7 : 1.1) + hash(i + 503) * 0.7;
+      ctx.fillStyle = hash(i + 601) > 0.85 ? `rgba(248,236,210,${a})` : c.gold(a);
+      ctx.fillRect(x - r / 2, y - r / 2, r, r);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    // the meaning, shown while each line holds its shape
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    MANTRA.forEach(([, en], k) => {
+      const [, formed, leaves] = STAGES[k];
+      const a = smooth(formed - 0.04, formed + 0.01, p) * (1 - smooth(leaves - 0.02, leaves + 0.02, p));
+      if (a <= 0) return;
+      ctx.fillStyle = `rgba(238,242,250,${0.85 * a})`;
+      ctx.font = `italic 400 ${Math.max(17, Math.round(sets[k].size * 0.3))}px ${c.serif}`;
+      ctx.fillText(en, W / 2, H * 0.46 + sets[k].size * 0.95);
+    });
+    return null;
+  }
+
+  // ── neti: "not this, not this" — thoughts let go one by one ──────────────────
+  const THOUGHTS = ['my name', 'the body', 'worry', 'memory', 'ambition', 'fear', 'the past', 'opinions',
+    'plans', 'desire', 'my story', 'restlessness', 'praise', 'blame', 'the future', 'doubt',
+    'the roles I play', 'comparison', 'noise', 'regret', 'hurry', 'what others think', 'the narrator', 'wanting'];
+  function neti(ctx, W, H, p) {
+    const c = palette(false);
+    const cx = W / 2, cy = H / 2, n = THOUGHTS.length;
+    // release order: a fixed shuffle
+    const order = THOUGHTS.map((_, i) => i).sort((a, b) => hash(a + 71) - hash(b + 71));
+    const rank = new Array(n);
+    order.forEach((idx, r) => { rank[idx] = r; });
+    // what remains: a soft light at the centre
+    const still = smooth(0.55, 1, p);
+    if (still > 0) {
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.45);
+      g.addColorStop(0, c.gold(0.22 * still));
+      g.addColorStop(1, c.gold(0));
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    THOUGHTS.forEach((word, i) => {
+      const release = 0.06 + 0.72 * rank[i] / (n - 1);
+      const gone = smooth(release, release + 0.08, p);
+      if (gone >= 1) return;
+      const ring = i < 6 ? 0 : i < 14 ? 1 : 2;
+      const slot = ring === 0 ? i : ring === 1 ? i - 6 : i - 14;
+      const perRing = [6, 8, 10][ring];
+      const ang = (slot + 0.5 * ring) / perRing * TAU + (hash(i + 17) - 0.5) * 0.25;
+      const rad = [0.42, 0.7, 0.96][ring];
+      const x = cx + Math.cos(ang) * W * 0.4 * rad + Math.sin(p * 3 + i) * 8;
+      const y = cy + Math.sin(ang) * H * 0.42 * rad + Math.cos(p * 2.3 + i * 1.7) * 6 - gone * 50;
+      const size = Math.round(17 + 11 * hash(i + 29)) * (W < 600 ? 0.75 : 1);
+      ctx.font = `${hash(i + 41) > 0.5 ? 'italic ' : ''}500 ${size}px ${c.serif}`;
+      ctx.filter = gone > 0 ? `blur(${(gone * 6).toFixed(1)}px)` : 'none';
+      ctx.fillStyle = c.ink((0.4 + 0.45 * hash(i + 53)) * (1 - gone));
+      ctx.fillText(word, x, y);
+    });
+    ctx.filter = 'none';
+    const show = smooth(0.8, 0.95, p);
+    if (show > 0) {
+      const s = Math.min(W, H) * 0.2 * lerp(0.92, 1, show);
+      ctx.fillStyle = c.gold(show);
+      ctx.font = `600 ${Math.round(s)}px ${KANNADA}`;
+      ctx.fillText('ಸತ್ಯ', cx, cy - s * 0.1);
+      ctx.fillStyle = c.ink(0.7 * smooth(0.86, 0.98, p));
+      ctx.font = `600 ${Math.max(10, Math.round(s * 0.09))}px ${c.sans}`;
+      ctx.fillText('W H A T   R E M A I N S', cx, cy + s * 0.62);
+    }
+    return null;
   }
 
   // ── mala: 108 beads and the guru bead ────────────────────────────────────────
@@ -285,7 +373,7 @@
     }
   }
 
-  const SCENES = { noise, nada, mala, lotus };
+  const SCENES = { noise, mantra, neti, mala, lotus };
   const hasST = !!(window.gsap && window.ScrollTrigger);
   const all = [];
 
@@ -347,5 +435,9 @@
 
   // colours follow the morning / evening theme and the web fonts once loaded
   new MutationObserver(() => all.forEach(r => r())).observe(root, { attributes: true, attributeFilter: ['class'] });
-  if (document.fonts) document.fonts.ready.then(() => all.forEach(r => r()));
+  if (document.fonts) {
+    const fresh = () => { canvases.forEach(cv => { if (cv._pts) cv._pts.stale = true; }); all.forEach(r => r()); };
+    document.fonts.ready.then(fresh);
+    document.fonts.load('600 40px "Noto Serif Kannada"', 'ಓಂ').then(fresh, () => {});
+  }
 })();
