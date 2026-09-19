@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles from the Stitch "Sacred Modernity" design */
+html { scroll-padding-top: 6rem; }
+html, body {
+  background-color: #f8fafc;
+  color: #191c21;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+}
+.sacred-quote {
+  font-family: 'EB Garamond', serif;
+  letter-spacing: 0.015em;
+}
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 230, 237, 0.8);
+}
+.glass-royal {
+  background: rgba(15, 43, 92, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(201, 154, 62, 0.25);
+}
+.hero-pattern {
+  background-color: #f8fafc;
+  background-image: radial-gradient(#143575 0.65px, transparent 0.65px), radial-gradient(#c99a3e 0.65px, #f8fafc 0.65px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+.dana-btn.active {
+  background-color: #0f2b5c;
+  color: #ffffff;
+  border-color: #0f2b5c;
+  box-shadow: 0 4px 14px rgba(15, 43, 92, 0.2);
+}
+
+/* Scroll Progress Bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3.5px;
+  width: 0%;
+  z-index: 100;
+  background: linear-gradient(90deg, #0f2b5c 0%, #1e3d7a 40%, #c99a3e 85%, #dfb76c 100%);
+  box-shadow: 0 0 10px rgba(201, 154, 62, 0.6);
+  transition: width 0.08s ease-out;
+}
+
+/* Shimmer Sweeps */
+.shimmer-card {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 65%
+  );
+  transform: rotate(25deg) translateY(-100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.shimmer-card:hover::after {
+  opacity: 1;
+  animation: shimmer-sweep 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes shimmer-sweep {
+  0% { transform: rotate(25deg) translateY(-100%); }
+  100% { transform: rotate(25deg) translateY(100%); }
+}
+
+/* Breathing Aura Rings for Om */
+.om-pulse-ring {
+  animation: pulse-ring 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.om-pulse-ring-delayed {
+  animation: pulse-ring 4s cubic-bezier(0.4, 0, 0.6, 1) 2s infinite;
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* Luminous golden dust floating animation */
+.ethereal-sparkle {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #dfb76c 0%, rgba(201, 154, 62, 0) 70%);
+  pointer-events: none;
+  animation: float-sparkle 6s ease-in-out infinite alternate;
+}
+@keyframes float-sparkle {
+  0% { transform: translate(0, 0) scale(0.8); opacity: 0.25; }
+  50% { transform: translate(12px, -18px) scale(1.2); opacity: 0.7; }
+  100% { transform: translate(-10px, -32px) scale(0.9); opacity: 0.3; }
+}
+
+/* Animated Golden Border for Lineage Quote */
+.lineage-quote-box {
+  position: relative;
+  background: #f8fafc;
+  border: 1px solid rgba(226, 230, 237, 0.9);
+  border-left: 4px solid #c99a3e;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lineage-quote-box.in-view {
+  box-shadow: 0 12px 30px -10px rgba(201, 154, 62, 0.25);
+  border-left-color: #dfb76c;
+}
+
+/* Scroll-Triggered Reveal Classes */
+.reveal-node {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-node.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide-in specific reveals for Satsang rows */
+.reveal-row {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-row.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 3D Tilt container */
+.interactive-tilt {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-node, .reveal-row, .interactive-tilt, .om-pulse-ring, .om-pulse-ring-delayed, .ethereal-sparkle {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* FAQ accordion: hide the native disclosure triangle */
+summary::-webkit-details-marker { display: none; }
