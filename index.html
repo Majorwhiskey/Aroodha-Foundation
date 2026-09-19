@@ -235,6 +235,23 @@
 </div>
 </div>
 </section>
+<!-- NADA: CHLADNI FIGURES (canvas, pinned on desktop) -->
+<section class="relative overflow-hidden bg-surface-pure border-y border-border-subtle" id="nada">
+<div class="max-w-7xl mx-auto px-6 lg:px-10 py-20 lg:py-0 lg:h-[calc(100vh-5rem)] grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+<div class="lg:col-span-5">
+<span class="text-xs font-bold uppercase tracking-[0.2em] text-gold block mb-3">Nada • ನಾದ</span>
+<h2 class="font-display text-3xl sm:text-5xl font-semibold text-primary-dark tracking-tight leading-tight mb-6">The shape of a sound</h2>
+<p class="text-base sm:text-lg text-on-surface-variant leading-relaxed mb-5">Scatter sand on a metal plate and let it ring. The grains flee the places that tremble and gather along the lines that stay perfectly still. Every note draws its own figure.</p>
+<p class="text-sm text-on-surface-variant leading-relaxed">The tradition says the same of creation: before form there is sound — ಓಂ. Scroll, and the note changes.</p>
+<div class="mt-8 inline-flex items-center gap-3 px-4 py-2 rounded-full border border-border-subtle bg-surface text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span><span data-scene-readout="">Mode 1 : 2</span>
+</div>
+</div>
+<div class="lg:col-span-7 flex justify-center">
+<canvas aria-label="A Chladni figure: sand patterns on a vibrating plate that change as you scroll" class="w-full max-w-[620px] aspect-square" data-end="+=170%" data-end-sm="bottom 10%" data-pin="#nada" data-scene="nada" data-start="top 80px" data-start-sm="top 85%" data-trigger="#nada" role="img"></canvas>
+</div>
+</div>
+</section>
 <!-- FOUNDER SECTION: UTTAM JNAN -->
 <section class="bg-surface-pure py-24 border-y border-border-subtle overflow-hidden relative" id="founder">
 <div class="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
@@ -436,6 +453,7 @@
 <!-- Multi-layered Ambient Glow and Sparkles -->
 <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-royal-blue/40 via-midnight-blue to-midnight-blue pointer-events-none transition-transform duration-1000" id="wisdom-glow"></div>
 <div class="wisdom-photo absolute inset-0 pointer-events-none"><img alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.remove()" src="assets/photos/wisdom.jpg"/></div>
+<canvas aria-hidden="true" class="absolute inset-0 w-full h-full pointer-events-none" data-end="+=130%" data-end-sm="bottom 15%" data-scene="noise" data-start="top 80px" data-start-sm="top 85%" data-trigger="#wisdom"></canvas>
 <!-- Ethereal Sparkle Orbs -->
 <div class="ethereal-sparkle w-24 h-24 top-12 left-1/4" style="animation-delay: 0s;"></div>
 <div class="ethereal-sparkle w-32 h-32 bottom-16 right-1/4" style="animation-delay: 2.5s;"></div>
@@ -810,4 +828,5 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 <script src="assets/motion.js"></script>
 <script src="assets/site.js"></script>
+<script src="assets/canvas.js"></script>
 </body></html>

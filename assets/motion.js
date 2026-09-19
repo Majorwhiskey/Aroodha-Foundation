@@ -196,9 +196,6 @@
     // ── Contemplation of the Day: pinned while the quote inks in (STILL.) ──
     const wisdom = $('#wisdom');
     if (wisdom && quote) {
-      const wm = mandala('wisdom-mandala');
-      wisdom.insertBefore(wm, wisdom.firstElementChild.nextSibling);
-      gsap.set(wm.children, { strokeDashoffset: 1 });
       mm.add(wide, () => {
         const split = SplitText.create(quote, { type: 'words' });
         const tl = gsap.timeline({
@@ -206,16 +203,11 @@
           scrollTrigger: { trigger: wisdom, start: 'top 80px', end: '+=130%', pin: true, scrub: 1 }
         });
         tl.fromTo(split.words, { opacity: 0.1, filter: 'blur(4px)' }, { opacity: 1, filter: 'blur(0px)', stagger: 0.1 })
-          .fromTo(wm.children, { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.01 }, 0)
-          .fromTo(wm, { rotation: -30, scale: 0.9 }, { rotation: 20, scale: 1.05 }, 0)
           .fromTo('#wisdom-glow', { scale: 1 }, { scale: 1.25 }, 0);
         if ($('.wisdom-photo', wisdom)) {
           tl.fromTo($('.wisdom-photo', wisdom), { clipPath: 'circle(0% at 50% 30%)' }, { clipPath: 'circle(80% at 50% 30%)' }, 0);
         }
         return () => split.revert();
-      });
-      mm.add('(max-width: 1023px)', () => {
-        drawIn(wm, { duration: 2.4, scrollTrigger: { trigger: wisdom, start: 'top 70%', once: true } });
       });
     }
 

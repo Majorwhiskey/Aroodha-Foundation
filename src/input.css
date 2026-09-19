@@ -210,7 +210,6 @@ html.is-loading #veil, #veil.is-active { display: flex; }
 .veil-mandala { left: 50%; top: 50%; width: 220px; translate: -50% -50%; color: #c99a3e; stroke-width: 0.9; }
 .hero-mandala { left: 50%; top: 44%; width: min(1100px, 150vw); translate: -50% -50%; color: #c99a3e; opacity: 0.2; stroke-width: 0.2; }
 .page-mandala { right: -8%; top: 50%; width: min(640px, 90vw); translate: 0 -50%; color: #c99a3e; opacity: 0.18; stroke-width: 0.32; }
-.wisdom-mandala { left: 50%; top: 50%; width: min(760px, 130vw); translate: -50% -50%; color: #dfb76c; opacity: 0.2; stroke-width: 0.28; }
 
 /* Lineage marquee */
 .marquee-track { display: flex; width: max-content; will-change: transform; }
