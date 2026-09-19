@@ -7,12 +7,14 @@
 //   mantra – the Pavamana mantra written in points of light, line by line, as the field
 //            dawns from darkness to light
 //   neti   – "not this, not this": drifting thoughts let go one by one until ಸತ್ಯ remains
+//   portrait – Uttam Jnan's photo drawn in the letters of his name, dissolving into the photograph
 //   mala   – japa: 108 beads and the guru bead, lit one by one
 //   lotus  – a lotus bud rises from the water and opens, reflected below
 //
 // Attributes: data-trigger (selector, default the parent section), data-start / data-end
 // (desktop ScrollTrigger positions), data-start-sm / data-end-sm (below 1024px),
-// data-pin (selector pinned on desktop). Reduced motion draws the finished figure (p = 1).
+// data-pin (selector pinned on desktop), data-from / data-to (map scroll progress onto
+// another range, e.g. 1 → 0.35 to run a scene backwards). Reduced motion draws p = 1.
 (() => {
   const canvases = [...document.querySelectorAll('canvas[data-scene]')];
   if (!canvases.length) return;
@@ -229,6 +231,71 @@
     return null;
   }
 
+  // ── portrait: the photo written in the letters of his name ───────────────────
+  // The <img> beneath the canvas is sampled into a grid; each cell becomes one akshara of
+  // ಉತ್ತಮ ಜ್ಞಾನ ಓಂ, sized and lit by the photo's brightness there. p 0 → 0.45 the letters
+  // gather; 0.55 → 1 they dissolve tile by tile, top first, uncovering the real photograph.
+  const NAME = ['ಉ', 'ತ್ತ', 'ಮ', 'ಜ್ಞಾ', 'ನ', 'ಓಂ'];
+  function portrait(ctx, W, H, p) {
+    const cv = ctx.canvas;
+    const img = cv._img || (cv._img = cv.parentElement.querySelector('img'));
+    if (!img) return null;
+    if (!img.complete || !img.naturalWidth) {
+      if (!cv._waiting) { cv._waiting = true; img.addEventListener('load', () => { cv._pts = null; cv._redraw && cv._redraw(); }, { once: true }); }
+      return null;
+    }
+    const cell = Math.max(7, Math.round(W / 52));
+    const cols = Math.ceil(W / cell), rows = Math.ceil(H / cell);
+    if (!cv._pts || cv._pts.W !== W || cv._pts.H !== H || cv._pts.stale) {
+      // draw the image "object-fit: cover" into a cols × rows canvas: one pixel per cell
+      const off = document.createElement('canvas');
+      off.width = cols; off.height = rows;
+      const o = off.getContext('2d');
+      const s = Math.max(cols / img.naturalWidth, rows / img.naturalHeight);
+      const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+      o.drawImage(img, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
+      let lum;
+      try {
+        const d = o.getImageData(0, 0, cols, rows).data;
+        lum = new Float32Array(cols * rows);
+        for (let k = 0; k < cols * rows; k++) lum[k] = (0.3 * d[k * 4] + 0.59 * d[k * 4 + 1] + 0.11 * d[k * 4 + 2]) / 255;
+      } catch (e) { return null; } // cross-origin image: leave the photo alone
+      // stretch contrast between the 5th and 95th percentile so features read in letters
+      const sorted = Array.from(lum).sort((a, b) => a - b);
+      const lo = sorted[Math.floor(sorted.length * 0.05)], hi = sorted[Math.floor(sorted.length * 0.95)];
+      for (let k = 0; k < lum.length; k++) lum[k] = clamp((lum[k] - lo) / Math.max(0.05, hi - lo));
+      cv._pts = { W, H, lum };
+    }
+    const lum = cv._pts.lum;
+    const gather = smooth(0, 0.45, p);
+    const reveal = smooth(0.55, 1, p);
+    if (reveal >= 1) return null;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let r = 0; r < rows; r++) {
+      for (let q = 0; q < cols; q++) {
+        const k = r * cols + q;
+        // photo shows through from the top down, each tile at a slightly different moment
+        const th = (r / rows) * 0.7 + hash(k + 3) * 0.3;
+        const gone = smooth(th - 0.12, th + 0.12, reveal * 1.25 - 0.1);
+        if (gone >= 1) continue;
+        const x = q * cell, y = r * cell;
+        ctx.fillStyle = `rgba(8,20,43,${1 - gone})`;
+        ctx.fillRect(x, y, cell + 0.5, cell + 0.5);
+        const L = Math.pow(lum[k], 1.6);
+        const appear = smooth(hash(k + 11) * 0.6, hash(k + 11) * 0.6 + 0.4, gather);
+        const size = cell * (0.22 + 1.15 * L) * appear;
+        if (size < 1) continue;
+        const drift = (1 - appear) * cell * 3;
+        ctx.font = `600 ${size.toFixed(1)}px ${KANNADA}`;
+        const warm = Math.round(160 + 90 * L);
+        ctx.fillStyle = `rgba(${Math.min(255, warm + 20)},${Math.round(120 + 100 * L)},${Math.round(50 + 120 * L)},${(0.1 + 0.9 * L) * (1 - gone)})`;
+        ctx.fillText(NAME[k % NAME.length], x + cell / 2 + (hash(k + 5) - 0.5) * drift, y + cell / 2 + (hash(k + 9) - 0.5) * drift);
+      }
+    }
+    return null;
+  }
+
   // ── mala: 108 beads and the guru bead ────────────────────────────────────────
   function mala(ctx, W, H, p) {
     const c = palette(false);
@@ -373,7 +440,7 @@
     }
   }
 
-  const SCENES = { noise, mantra, neti, mala, lotus };
+  const SCENES = { noise, mantra, neti, portrait, mala, lotus };
   const hasST = !!(window.gsap && window.ScrollTrigger);
   const all = [];
 
@@ -384,16 +451,19 @@
     const section = cv.closest('section');
     const readout = section && section.querySelector('[data-scene-readout]');
     const state = { p: reduce ? 1 : 0 };
+    const from = cv.dataset.from ? parseFloat(cv.dataset.from) : 0;
+    const to = cv.dataset.to ? parseFloat(cv.dataset.to) : 1;
     let W = 0, H = 0, queued = false;
     const render = () => {
       queued = false;
       if (!W || !H) return;
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       ctx.clearRect(0, 0, W, H);
-      const out = draw(ctx, W, H, state.p);
+      const out = draw(ctx, W, H, reduce ? 1 : lerp(from, to, state.p));
       if (readout && out) readout.textContent = out;
     };
     const redraw = () => { if (!queued) { queued = true; requestAnimationFrame(render); } };
+    cv._redraw = redraw;
     const resize = () => {
       const r = cv.getBoundingClientRect();
       W = r.width; H = r.height;
